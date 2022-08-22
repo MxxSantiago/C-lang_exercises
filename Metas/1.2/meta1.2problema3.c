@@ -1,5 +1,5 @@
 /* Leer una cadena de caracteres , contar cuantas palabras hay, preguntar cuantas quieres mostrar y solo 
-mostrar las que se indiquen, validar no aceptar mostrar un número de palabras mayor al que contiene la cadena */
+mostrar las que se indiquen, validar no aceptar mostrar un nÃºmero de palabras mayor al que contiene la cadena */
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -7,8 +7,8 @@ mostrar las que se indiquen, validar no aceptar mostrar un número de palabras ma
 #include <ctype.h>
 
 int main() {
-	int cantidad = 0;
-	char cadena[100] = "";
+	int cantidad = 0, mostrar = 0, i, j, k;
+	char cadena[100];
 	
 	printf("Ingrese una cadena de caracteres: ");
 	gets(cadena);
@@ -16,16 +16,25 @@ int main() {
 	int longitudCadena = strlen(cadena);
 	
 	// Contar palabras
-	int i = 0;
-	
-	for (i; i <= longitudCadena; i++) {
-		if (i == 0 && isalpha(cadena[i])) cantidad += 1;
-		if (cadena[i] == ' ' && isalpha(cadena[i + 1])) cantidad += 1;
+	for (i = 0; i <= longitudCadena; i++) {
+		char valorActual = cadena[i], valorSiguiente = cadena[i + 1];
+		
+		if (i == 0 && isalpha(valorActual)) cantidad ++;
+		
+		if (cadena[i] == ' ') {
+			for (j = i; j <= longitudCadena; j++) {
+				if (isalpha(cadena[j])) {
+					cantidad++;
+					
+					i = j;
+					
+					break;
+				}
+			}
+		}
 	}
 	
 	// Preguntar cuantas palabras mostrar
-	int mostrar = 0;
-	
 	while (mostrar <= 0) {
 		system("cls");
 		
@@ -35,20 +44,40 @@ int main() {
 		if (mostrar > cantidad) {
 			mostrar = 0;
 			
-			printf("\nSe debe ingresar una cantidad menor o igual a la de la cadena ingresada. (%i)\n", cantidad);
+			printf("\nSe debe ingresar una cantidad menor o igual a la de la cadena ingresada. (%i)\n\n", cantidad);
 			
 			system("pause");
 		}
 	}
 		
 	// Mostrar palabras
-	int j = 0;
-	
-	for (j; j <= longitudCadena; j++) {
-		printf("%c", cadena[j]);
+	for (i = 0; i <= longitudCadena; i++) {
+		char valorActual = cadena[i], valorSiguiente = cadena[i + 1];
 		
-		if (j == 0 || cadena[j + 1] == ' ') mostrar -= 1;
+		if (i == 0 && isalpha(valorActual)) mostrar--;
 		
 		if (mostrar < 0) break;
+		
+		printf("%c", valorActual);
+		
+		if (valorSiguiente == ' ') {
+			for (j = i + 1; j <= longitudCadena; j++) {
+				if (isalpha(cadena[j])) {
+					for (k = j - 1; k <= longitudCadena; k++) {
+						printf("%c", cadena[k]);
+						
+						if (cadena[k] == ' ') {
+							i = k;
+							
+							mostrar--;
+							
+							break;
+						}
+					}
+					
+					break;
+				}
+			}
+		}
 	}
 }
