@@ -1,23 +1,27 @@
-// Leer una cadena de caracteres y si hay un punto antes de una palabra cambiar la primera letra a mayúscula
+// Leer una cadena de caracteres y si hay un punto antes de una palabra cambiar la primera letra a mayÃºscula
 
 #include <stdio.h>
 #include <string.h>
+#include <ctype.h>
 
 int main() {
-	char cadena[100] = "";
+	char cadena[100], i, j;
 	
 	printf("Ingrese una cadena de caracteres: ");
 	gets(cadena);
 	
 	int longitudCadena = strlen(cadena);
 	
-	int i = 0;
-	
-	for(i; i <= longitudCadena; i++) {
+	for (i = 0; i <= longitudCadena; i++) {
 		if (cadena[i] == '.') {
-			cadena[i + 1] = cadena[i + 1] - 'a' + 'A';
+			for (j = i; j <= longitudCadena; j++) {
+				if (isalpha(cadena[j])) {
+					cadena[j] = toupper(cadena[j]);
+					break;
+				}
+			}
 		}
 	}
 	
-	printf("\n%s\n", cadena);
+	printf("\nCadena modificada:\n\n%s", cadena);
 }
