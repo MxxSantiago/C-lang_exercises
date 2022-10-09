@@ -7,11 +7,10 @@
 #define READ "r"
 #define WRITE "w"
 
-typedef struct
-{
+typedef struct {
     char name[40];
     char address[40];
-    char phoneNumber[20];
+    char phoneNumber[10];
     float monthlySalary;
 } User;
 
@@ -20,56 +19,51 @@ typedef struct
 #define USERS_QUANTITY 3
 
 void initFile(char fileAction[]),
-    showOne(User user),
-    createOne(),
-    createSeveral(),
-    showAll(),
-    showThoseThatStartWith(),
-    showThoseWithHigherSalary(),
-    showQuantityOfRecords(),
-    showHigherThanRequestedSalary();
+        showOne(User user),
+        createOne(),
+        createSeveral(),
+        showAll(),
+        showThoseThatStartWith(),
+        showThoseWithHigherSalary(),
+        showQuantityOfRecords(),
+        showHigherThanRequestedSalary();
 
 int menu();
 
 FILE *filePointer = NULL;
 
-float requestedSalary = 0;
-
-int main()
-{
+int main() {
     int option = 0;
 
-    while (option != 7)
-    {
+    while (option != 7) {
         option = menu();
 
         system("cls");
 
-        switch (option)
-        {
-        case 1:
-            createSeveral();
-            break;
-        case 2:
-            showAll();
-            break;
-        case 3:
-            showThoseThatStartWith();
-            break;
-        case 4:
-            showQuantityOfRecords();
-            break;
-        case 5:
-            showHigherThanRequestedSalary();
-            break;
-        case 6:
-            showThoseWithHigherSalary();
-            break;
-        case 7:
-            puts("Bye");
-            break;
-        default:
-            puts("The given option does not exist...");
+        switch (option) {
+            case 1:
+                createSeveral();
+                break;
+            case 2:
+                showAll();
+                break;
+            case 3:
+                showThoseThatStartWith();
+                break;
+            case 4:
+                showQuantityOfRecords();
+                break;
+            case 5:
+                showHigherThanRequestedSalary();
+                break;
+            case 6:
+                showThoseWithHigherSalary();
+                break;
+            case 7:
+                puts("Bye");
+                break;
+            default:
+                puts("The given option does not exist...");
         }
 
         printf("\n");
@@ -80,8 +74,7 @@ int main()
     return 0;
 }
 
-int menu()
-{
+int menu() {
     int option;
 
     puts("1) Record");
@@ -98,19 +91,16 @@ int menu()
     return option;
 }
 
-void initFile(char fileAction[])
-{
+void initFile(char fileAction[]) {
     filePointer = fopen(DATABASE, fileAction);
 
-    if (filePointer == NULL)
-    {
+    if (filePointer == NULL) {
         printf("An error occurred while opening the file\n");
         exit(1);
     }
 }
 
-void createOne()
-{
+void createOne() {
     User user;
 
     printf("Monthly salary: ");
@@ -129,41 +119,35 @@ void createOne()
     fwrite(&user, USER_BLOCK_SIZE, 1, filePointer);
 }
 
-void createSeveral()
-{
+void createSeveral() {
     initFile(WRITE);
 
-    for (int i = 0; i < USERS_QUANTITY; i++)
-    {
+    for (int i = 0; i < USERS_QUANTITY; i++) {
         createOne();
     }
 
     fclose(filePointer);
 }
 
-void showAll()
-{
+void showAll() {
     User user;
 
     initFile(READ);
 
-    while (fread(&user, USER_BLOCK_SIZE, 1, filePointer))
-    {
+    while (fread(&user, USER_BLOCK_SIZE, 1, filePointer)) {
         showOne(user);
     }
 
     fclose(filePointer);
 }
 
-void showQuantityOfRecords()
-{
+void showQuantityOfRecords() {
     User user;
     int quantity = 0;
 
     initFile(READ);
 
-    while (fread(&user, USER_BLOCK_SIZE, 1, filePointer))
-    {
+    while (fread(&user, USER_BLOCK_SIZE, 1, filePointer)) {
         quantity++;
     }
 
@@ -172,18 +156,19 @@ void showQuantityOfRecords()
     fclose(filePointer);
 }
 
-void showHigherThanRequestedSalary()
-{
+void showHigherThanRequestedSalary() {
     User user;
+    float requestedSalary = 0;
+
+    printf("Enter the requested salary: ");
+    scanf("%f", &requestedSalary);
 
     initFile(READ);
 
-    printf("Users with highest salary than the requested one:\n\n");
+    printf("\n\nUsers with highest salary than the requested one:\n\n");
 
-    while (fread(&user, USER_BLOCK_SIZE, 1, filePointer))
-    {
-        if (user.monthlySalary > requestedSalary)
-        {
+    while (fread(&user, USER_BLOCK_SIZE, 1, filePointer)) {
+        if (user.monthlySalary > requestedSalary) {
             showOne(user);
         }
     }
@@ -191,16 +176,14 @@ void showHigherThanRequestedSalary()
     fclose(filePointer);
 }
 
-void showOne(User user)
-{
+void showOne(User user) {
     printf("Monthly salary: %.2f\n", user.monthlySalary);
     printf("Name: %s\n", user.name);
     printf("Address: %s\n", user.address);
     printf("Phone number: %s\n\n", user.phoneNumber);
 }
 
-void showThoseThatStartWith()
-{
+void showThoseThatStartWith() {
     User user;
     char enteredCharacter;
 
@@ -211,10 +194,8 @@ void showThoseThatStartWith()
 
     printf("\n");
 
-    while (fread(&user, USER_BLOCK_SIZE, 1, filePointer))
-    {
-        if (tolower(user.name[0]) == tolower(enteredCharacter))
-        {
+    while (fread(&user, USER_BLOCK_SIZE, 1, filePointer)) {
+        if (tolower(user.name[0]) == tolower(enteredCharacter)) {
             showOne(user);
         }
     }
@@ -222,17 +203,14 @@ void showThoseThatStartWith()
     fclose(filePointer);
 }
 
-void showThoseWithHigherSalary()
-{
+void showThoseWithHigherSalary() {
     User user;
     float higherSalary = 0;
 
     initFile(READ);
 
-    while (fread(&user, USER_BLOCK_SIZE, 1, filePointer))
-    {
-        if (user.monthlySalary > higherSalary)
-        {
+    while (fread(&user, USER_BLOCK_SIZE, 1, filePointer)) {
+        if (user.monthlySalary > higherSalary) {
             higherSalary = user.monthlySalary;
         }
     }
@@ -241,13 +219,12 @@ void showThoseWithHigherSalary()
 
     printf("Users with highest salary:\n\n");
 
-    while (fread(&user, USER_BLOCK_SIZE, 1, filePointer))
-    {
-        if (user.monthlySalary == higherSalary)
-        {
+    while (fread(&user, USER_BLOCK_SIZE, 1, filePointer)) {
+        if (user.monthlySalary == higherSalary) {
             showOne(user);
         }
     }
 
     fclose(filePointer);
 }
+
