@@ -36,6 +36,7 @@ void initFile(char fileAction[]),
 		showAll(),
 		showWithRequestedIMCAndAge(),
 		showWithRequestedAgeRange(),
+		modification(),
 		printTable(int initialPositionY);
 
 int getIMCFromMenu(float IMC), menu();
@@ -54,7 +55,7 @@ int main() {
 
 	int option = 0;
 
-	while (option != 5) {
+	while (option != 6) {
 		option = menu();
 
 		system("clear");
@@ -73,6 +74,9 @@ int main() {
 				showWithRequestedAgeRange();
 				break;
 			case 5:
+				modification();
+				break;
+			case 6:
 				puts("Bye");
 				break;
 			default:
@@ -96,7 +100,8 @@ int menu() {
 	printw("2) Show\n");
 	printw("3) IMC and gender\n");
 	printw("4) Show per age range\n");
-	printw("5) Exit\n");
+	printw("5) Modification\n");
+	printw("6) Exit\n");
 
 	printw("\nOption: ");
 	scanw("%d", &option);
@@ -338,4 +343,72 @@ void showOne(User user, int verticalViewPosition) {
 
 	attroff(COLOR_PAIR(1));
 	attroff(COLOR_PAIR(2));
+}
+
+void modification() {
+	User user;
+	char enteredName[NAME_LENGTH];
+	int isUserAvailable = 0;
+
+	printw("Enter the user name to modificate: ");
+	scanw("%s", enteredName);
+
+	initFile("r+b");
+	clear();
+
+	while (fread(&user, USER_BLOCK_SIZE, 1, filePointer)) {
+		if (strcasecmp(user.name, enteredName) == 0) {
+			int option = 0;
+			isUserAvailable = 1;
+
+			printw("1) Name\n"
+				   "2) Gender\n"
+				   "3) Age\n"
+				   "4) Height\n"
+				   "5) Weight\n");
+
+			printw("\nOption: ");
+			scanw("%d", &option);
+
+			clear();
+
+			switch (option) {
+				case 1:
+					printw("New name: ");
+					scanw("%s", user.name);
+					break;
+				case 2:
+					printw("New gender: ");
+					scanw("%c", &user.gender);
+					break;
+				case 3:
+					printw("New age: ");
+					scanw("%d", &user.age);
+					break;
+				case 4:
+					printw("New height: ");
+					scanw("%f", &user.height);
+					break;
+				case 5:
+					printw("New weight: ");
+					scanw("%f", &user.weight);
+					break;
+				default:
+					printw("The entered option does not exist...");
+			}
+
+			int position = ftell(filePointer) - USER_BLOCK_SIZE;
+
+			fseek(filePointer, position, SEEK_SET);
+			fwrite(&user, USER_BLOCK_SIZE, 1, filePointer);
+
+			fclose(filePointer);
+
+			break;
+		}
+	}
+
+	if (!isUserAvailable) {
+		printw("A user with the entered name does not exist");
+	}
 }
